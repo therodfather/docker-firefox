@@ -4,14 +4,22 @@
 # https://github.com/jlesage/docker-firefox
 #
 
+# Build the membarrier check tool.
+FROM alpine:3.12
+WORKDIR /tmp
+COPY membarrier_check.c .
+RUN apk --no-cache add build-base linux-headers
+RUN gcc -static -o membarrier_check membarrier_check.c
+RUN strip membarrier_check
+
 # Pull base image.
-FROM jlesage/baseimage-gui:alpine-3.10-v3.5.3
+FROM jlesage/baseimage-gui:alpine-3.12-v3.5.6
 
 # Docker image version is provided via build arg.
 ARG DOCKER_IMAGE_VERSION=unknown
 
 # Define software versions.
-ARG FIREFOX_VERSION=74.0-r0
+ARG FIREFOX_VERSION=81.0-r0
 ARG JSONLZ4_VERSION=c4305b8
 ARG LZ4_VERSION=1.8.1.2
 #ARG PROFILE_CLEANER_VERSION=2.36
@@ -49,9 +57,10 @@ RUN \
 
 # Install Firefox.
 RUN \
-    add-pkg --repository http://dl-cdn.alpinelinux.org/alpine/edge/main \
-            --repository http://dl-cdn.alpinelinux.org/alpine/edge/community \
-            --upgrade firefox=${FIREFOX_VERSION}
+#    add-pkg --repository http://dl-cdn.alpinelinux.org/alpine/edge/main \
+#            --repository http://dl-cdn.alpinelinux.org/alpine/edge/community \
+#            --upgrade firefox=${FIREFOX_VERSION}
+     add-pkg firefox=${FIREFOX_VERSION}
 
 # Install extra packages.
 RUN \
@@ -93,7 +102,7 @@ RUN \
 RUN \
     add-pkg yad && \
     sed-patch 's|LOG_FILES=|LOG_FILES=/config/log/firefox/error.log|' /etc/logmonitor/logmonitor.conf && \
-    sed-patch 's|STATUS_FILES=|STATUS_FILES=/tmp/.firefox_shm_check|' /etc/logmonitor/logmonitor.conf
+    sed-patch 's|STATUS_FILES=|STATUS_FILES=/tmp/.firefox_shm_check,/tmp/.firefox_membarrier_check|' /etc/logmonitor/logmonitor.conf
 
 # Adjust the openbox config.
 RUN \
@@ -111,6 +120,7 @@ RUN \
 
 # Add files.
 COPY rootfs/ /
+COPY --from=0 /tmp/membarrier_check /usr/bin/
 
 # Set environment variables.
 ENV APP_NAME="Firefox"
