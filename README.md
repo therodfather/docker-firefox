@@ -1,5 +1,5 @@
 # Docker container for Firefox
-[![Docker Image Size](https://img.shields.io/microbadger/image-size/jlesage/firefox)](http://microbadger.com/#/images/jlesage/firefox) [![Build Status](https://drone.le-sage.com/api/badges/jlesage/docker-firefox/status.svg)](https://drone.le-sage.com/jlesage/docker-firefox) [![GitHub Release](https://img.shields.io/github/release/jlesage/docker-firefox.svg)](https://github.com/jlesage/docker-firefox/releases/latest) [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://paypal.me/JocelynLeSage/0usd)
+[![Docker Image Size](https://img.shields.io/docker/image-size/jlesage/firefox/latest)](https://hub.docker.com/r/jlesage/firefox/tags) [![Build Status](https://drone.le-sage.com/api/badges/jlesage/docker-firefox/status.svg)](https://drone.le-sage.com/jlesage/docker-firefox) [![GitHub Release](https://img.shields.io/github/release/jlesage/docker-firefox.svg)](https://github.com/jlesage/docker-firefox/releases/latest) [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://paypal.me/JocelynLeSage/0usd)
 
 This is a Docker container for [Firefox](https://www.mozilla.org/en-US/firefox/).
 
@@ -167,7 +167,6 @@ version: '3'
 services:
   firefox:
     image: jlesage/firefox
-    build: .
     ports:
       - "5800:5800"
     volumes:
@@ -176,8 +175,19 @@ services:
 
 ## Docker Image Update
 
-If the system on which the container runs doesn't provide a way to easily update
-the Docker image, the following steps can be followed:
+Because features are added, issues are fixed, or simply because a new version
+of the containerized application is integrated, the Docker image is regularly
+updated.  Different methods can be used to update the Docker image.
+
+The system used to run the container may have a built-in way to update
+containers.  If so, this could be your primary way to update Docker images.
+
+An other way is to have the image be automatically updated with [Watchtower].
+Whatchtower is a container-based solution for automating Docker image updates.
+This is a "set and forget" type of solution: once a new image is available,
+Watchtower will seamlessly perform the necessary steps to update the container.
+
+Finally, the Docker image can be manually updated with these steps:
 
   1. Fetch the latest image:
 ```
@@ -191,7 +201,10 @@ docker stop firefox
 ```
 docker rm firefox
 ```
-  4. Start the container using the `docker run` command.
+  4. Create and start the container using the `docker run` command, with the
+the same parameters that were used when it was deployed initially.
+
+[Watchtower]: https://github.com/containrrr/watchtower
 
 ### Synology
 
@@ -206,7 +219,8 @@ container image.
   6.  Click on *Container* in the left pane.
   7.  Select your Firefox container.
   8.  Stop it by clicking *Action*->*Stop*.
-  9.  Clear the container by clicking *Action*->*Clear*.  This removes the
+  9.  Clear the container by clicking *Action*->*Reset* (or *Action*->*Clear* if
+      you don't have the latest *Docker* application).  This removes the
       container while keeping its configuration.
   10. Start the container again by clicking *Action*->*Start*. **NOTE**:  The
       container may temporarily disappear from the list while it is re-created.
@@ -223,7 +237,7 @@ For unRAID, a container image can be updated by following these steps:
 
 When using data volumes (`-v` flags), permissions issues can occur between the
 host and the container.  For example, the user within the container may not
-exists on the host.  This could prevent the host from properly accessing files
+exist on the host.  This could prevent the host from properly accessing files
 and folders on the shared volume.
 
 To avoid any problem, you can specify the user the application should run as.
@@ -463,7 +477,7 @@ To properly work, recent versions of Firefox need the
 `membarrier` system call.  Without it, tabs would frequently crash.
 
 Docker uses [seccomp profile] to restrict system calls available to the
-container.  Before Docker version `20.03.0`, the `membarrier` system call was
+container.  Before Docker version `20.10.0`, the `membarrier` system call was
 not allowed in the default profile.  If you run a such version, you can use one
 of the following solutions, from the most to the least secure, to provide the
 container permission to use this sytem call:
