@@ -102,6 +102,45 @@ app:
               for more details.
             - Make sure the kernel of your Linux distribution is up-to-date.
   changelog:
+    - version: 25.09.1
+      date: 2025-09-07
+      changes:
+        - 'Updated Firefox to version 142.0-r0.'
+        - 'Added support for multiple URLs defined by `FF_OPEN_URL`.'
+    - version: 25.07.2
+      date: 2025-07-26
+      changes:
+        - 'Updated Firefox to version 140.0.4-r1.'
+        - 'Updated baseimage to version 4.9.0.'
+    - version: 25.07.1
+      date: 2025-07-05
+      changes:
+        - 'Updated baseimage to version 4.8.2, which brings the following changes:'
+        - '2:Fixed automatic reconnect of the web interface when web authentication is enabled.'
+        - '2:Fixed some resources that could not be accessed behind a reverse proxy based on URL path.'
+    - version: 25.06.2
+      date: 2025-06-25
+      changes:
+        - 'Updated baseimage to version 4.8.1, which brings the following changes:'
+        - '2:Fixed crash with some binaries on systems using old kernel.'
+    - version: 25.06.1
+      date: 2025-06-20
+      changes:
+        - 'Updated Firefox to version 139.0-r0'
+        - 'Updated baseimage to version 4.8.0, which brings the following changes:'
+        - '2:Added automatic reconnect support of the web interface.'
+        - '2:Added web file manager.'
+        - '2:Updated noVNC to version 1.6.0.'
+        - '2:Updated web UI components (Bootstrap).'
+        - '2:Do not ask VNC password when accessing the web interface and web authentication is enabled.'
+    - version: 25.04.1
+      date: 2025-04-06
+      changes:
+        - 'Updated Firefox to version 136.0.4-r0.'
+    - version: 25.03.1
+      date: 2025-03-19
+      changes:
+        - 'Updated Firefox to version 136.0-r0.'
     - version: 25.02.2
       date: 2025-02-16
       changes:
@@ -439,10 +478,14 @@ container:
   environment_variables:
     - name: FF_OPEN_URL
       description: >-
-        The URL to open when {{ app.friendly_name }} starts.
+        The URL to open when {{ app.friendly_name }} starts. Multiple URLs can
+        be opened by separating them with the pipe character (`|`).
       type: public
       unraid_template:
         title: "Open URL"
+        description: >-
+          The URL to open when {{ app.friendly_name }} starts. Multiple URLs can
+          be opened by separating them with the pipe character ('|').
         display: advanced
         required: false
         mask: false
